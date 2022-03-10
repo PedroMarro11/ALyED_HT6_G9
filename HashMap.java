@@ -1,3 +1,2 @@
-import java.util.Map;
-public class HashMap<K,V> {
+public class HashMap<K,V> implements Map<K,V> {
 }
