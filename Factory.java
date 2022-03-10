@@ -7,14 +7,16 @@ public class Factory {
 
     public Map<String,String> NewMap(int type)
     {
+        Map<String, String> mapa = null;
         switch(type)
         {
             case 1:
-                return new HashMap<String, String>();
+                mapa = new HashMap<String, String>();
             case 2:
-                return new TreeMap<String,String>();
+                mapa = new TreeMap<String,String>();
             case 3:
-                return new LinkedHashMap<String, String>();
+                mapa = new LinkedHashMap<String, String>();
         }
+        return mapa;
     }
 }
