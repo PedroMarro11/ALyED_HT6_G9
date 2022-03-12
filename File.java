@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class File implements Readable {
 
-    public File(String s) {
+    public File() {
 
     }
     public class ReadFile {
