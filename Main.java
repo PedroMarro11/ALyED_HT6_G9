@@ -1,3 +1,9 @@
+/*Universidad del Valle de Guatemala
+* Algoritmos y estrucutras de datos
+* @author Diana Díaz 21066
+* @author Pedro Marroquin 21801
+* @version 1.0 17/03/2022
+* */
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
