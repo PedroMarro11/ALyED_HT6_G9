@@ -34,51 +34,57 @@ public class Main {
 
         Scanner input = new Scanner(System.in);
         Map <String, String> mainMap;
-        Map <String, String> collection;
         Factory factory = new Factory();
-
+        ArrayList<String> collection = new ArrayList<String>();
 
         //Selección del tipo de mapa que desea usar.
-        System.out.println("Seleccione el número del tipo de mapa que desea: ");
-        System.out.println(factoryMenu);
-        int mapType = Integer.parseInt(input.next());
+
+        int mapType = 0;
+        while(true)
+        {
+            System.out.println("Seleccione el número del tipo de mapa que desea: ");
+            System.out.println(factoryMenu);
+            String opcion = input.next();
+            if(Controlador.isInt(opcion))
+            {
+                mapType = Integer.parseInt(opcion);
+                break;
+            }
+        }
+
 
         switch (mapType) {
             //Definir como ArrayPila
             case 1: {
-                mainMap = factory.("HashMap");
-                collection = factory.NewMap("HashMap");
+                mainMap = factory.NewMap(1);
                 break;
             }
 
             //Definir como VectorPila
             case 2: {
-                mainMap = factory.NewMap("TreeMap");
-                collection = factory.NewMap("TreeMap");
+                mainMap = factory.NewMap(2);
                 break;
             }
 
             //Definir como lista (elegir el tipo de lista).
             case 3: {
-                mainMap = factory.NewMap("LinkedHashMap");
-                collection = factory.NewMap("LinkedHashMap");
+                mainMap = factory.NewMap(3);
                 break;
             }
 
             default:
-                mainMap = factory.NewMap("HashMap");
-                collection = factory.NewMap("HashMap");
+                mainMap = factory.NewMap(1);
                 break;
         }
 
         //Programa principal.
         do {
             System.out.println(mainMenu);
-            int option = Integer.parseInt(input.next());
+            String option = input.next();
 
             switch (option) {
 
-                case 1: {
+                case "1": {
                     try {
                         //Lectura del archivo de texto.
                         Stream<String> lines = Files.lines(
@@ -87,7 +93,7 @@ public class Main {
                         );
                         //Para cada línea del arcivo de texto separa por "|" y se almacenan los datos en el Map.
                         lines.forEach(line -> {
-                            String[] parts = line.split("|");
+                            String[] parts = line.split("[\\s|]+");
                             String key = parts[0];
                             String val = parts[1];
                             mainMap.put(key, val);
@@ -112,10 +118,10 @@ public class Main {
                             System.out.println("Cuál es el nombre de la carta que desea agregar a su colección? ");
                             String name = input.nextLine();
 
-                            if (mainMap.containsKey(name) && !collection.containsKey(name)){
-                                collection.put(name, mainMap.get(name));
+                            if (mainMap.containsKey(name)){
+                                collection.add(name);
                             } else {
-                                System.out.println("Revise que el nombre de la carta no esté tomado o que no exista. ");
+                                System.out.println("Revise que el nombre de la carta esté bien escrito o que exista.");
                             }
 
                             break;
@@ -139,9 +145,9 @@ public class Main {
                             int monstruoCont = 0;
                             int trampaContador = 0;
                             int hechizoContador = 0;
-                            for(Map.Entry<String, String> entry : collection.entrySet()) {
-                                String key = entry.getKey();
-                                String value = entry.getValue();
+                            for(String entry : collection) {
+                                String key = entry;
+                                String value = mainMap.get(key);
 
                                 //Suma a los contadores dependiendo del tipo de la carta.
                                 System.out.println("Nombre: " + key + " Tipo: " + value);
@@ -168,21 +174,21 @@ public class Main {
                             ArrayList<Map.Entry<String, String>> monstruoType = new ArrayList<>();
                             ArrayList<Map.Entry<String, String>> hechiceroType = new ArrayList<>();
                             ArrayList<Map.Entry<String, String>> trampaType = new ArrayList<>();
-                            for(Map.Entry<String, String> entry : collection.entrySet()) {
-                                String key = entry.getKey();
-                                String value = entry.getValue();
-
+                            for(String entry : collection) {
+                                String key = entry;
+                                String value = mainMap.get(key);
+                                Map.Entry<String, String> asosiacion = new AbstractMap.SimpleEntry<String, String>(key, value);
                                 //Suma a los contadores dependiendo del tipo de la carta.
                                 if(value.equals("Monstruo")){
                                     monstruoCont ++;
-                                    monstruoType.add(entry);
+                                    monstruoType.add(asosiacion);
 
                                 } else if (value.equals("Trampa")){
                                     trampaContador ++;
-                                    hechiceroType.add(entry);
+                                    hechiceroType.add(asosiacion);
                                 } else {
                                     hechizoContador ++;
-                                    hechiceroType.add(entry);
+                                    hechiceroType.add(asosiacion);
                                 }
                             }
 
@@ -279,10 +285,12 @@ public class Main {
                     break;
                 }
 
-                case 2: {
+                case "2": {
                     wantsToContinue = false;
                     break;
                 }
+                default:
+                    break;
             }
 
         } while (wantsToContinue);
