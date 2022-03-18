@@ -1,4 +1,6 @@
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -27,7 +29,7 @@ public class Main {
             " 6. Mostrar el nombre y tipo de todas las cartas existentes ordenadas por tipo. \n" +
             " 7. Salir ";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         //Atributo wantsToContinue que permite al usuario repetir el programa sin necesidad de salirse.
         boolean wantsToContinue = true;
@@ -36,6 +38,7 @@ public class Main {
         Map <String, String> mainMap;
         Factory factory = new Factory();
         ArrayList<String> collection = new ArrayList<String>();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         //Selección del tipo de mapa que desea usar.
 
@@ -54,19 +57,19 @@ public class Main {
 
 
         switch (mapType) {
-            //Definir como ArrayPila
+            //Definir como HashMap
             case 1: {
                 mainMap = factory.NewMap(1);
                 break;
             }
 
-            //Definir como VectorPila
+            //Definir como TreeMap
             case 2: {
                 mainMap = factory.NewMap(2);
                 break;
             }
 
-            //Definir como lista (elegir el tipo de lista).
+            //Definir como LinkedHashMap
             case 3: {
                 mainMap = factory.NewMap(3);
                 break;
@@ -93,7 +96,7 @@ public class Main {
                         );
                         //Para cada línea del arcivo de texto separa por "|" y se almacenan los datos en el Map.
                         lines.forEach(line -> {
-                            String[] parts = line.split("[\\s|]+");
+                            String[] parts = line.split("[|]");
                             String key = parts[0];
                             String val = parts[1];
                             mainMap.put(key, val);
@@ -116,21 +119,23 @@ public class Main {
                         case 1: {
                             //Pedir el nombre de la carta
                             System.out.println("Cuál es el nombre de la carta que desea agregar a su colección? ");
-                            String name = input.nextLine();
+                            //input.next();
+                            String name = br.readLine();
+
 
                             if (mainMap.containsKey(name)){
                                 collection.add(name);
+
                             } else {
                                 System.out.println("Revise que el nombre de la carta esté bien escrito o que exista.");
                             }
 
-                            break;
                         }
 
                         // 2. Mostrar el tipo de carta.
                         case 2: {
                             System.out.println("Ingrese el nombre de la carta: ");
-                            String name = input.next();
+                            String name = br.readLine();
 
                             if (mainMap.containsKey(name)){
 
@@ -171,35 +176,36 @@ public class Main {
                             int monstruoCont = 0;
                             int trampaContador = 0;
                             int hechizoContador = 0;
-                            ArrayList<Map.Entry<String, String>> monstruoType = new ArrayList<>();
-                            ArrayList<Map.Entry<String, String>> hechiceroType = new ArrayList<>();
-                            ArrayList<Map.Entry<String, String>> trampaType = new ArrayList<>();
+                            ArrayList<String> monstruoType = new ArrayList<>();
+                            ArrayList<String> hechiceroType = new ArrayList<>();
+                            ArrayList<String> trampaType = new ArrayList<>();
+
                             for(String entry : collection) {
                                 String key = entry;
                                 String value = mainMap.get(key);
-                                Map.Entry<String, String> asosiacion = new AbstractMap.SimpleEntry<String, String>(key, value);
+
                                 //Suma a los contadores dependiendo del tipo de la carta.
                                 if(value.equals("Monstruo")){
                                     monstruoCont ++;
-                                    monstruoType.add(asosiacion);
+                                    monstruoType.add(entry);
 
                                 } else if (value.equals("Trampa")){
                                     trampaContador ++;
-                                    hechiceroType.add(asosiacion);
+                                    trampaType.add(entry);
                                 } else {
                                     hechizoContador ++;
-                                    hechiceroType.add(asosiacion);
+                                    hechiceroType.add(entry);
                                 }
                             }
 
-                            for(Map.Entry<String, String> e: monstruoType){
-                                System.out.println("Nombre: " + e.getKey() + "| Tipo: " + e.getValue());
+                            for(String e: monstruoType){
+                                System.out.println("Nombre: " + e + "| Tipo: " + mainMap.get(e));
                             }
-                            for(Map.Entry<String, String> e: trampaType){
-                                System.out.println("Nombre: " + e.getKey() + "| Tipo: " + e.getValue());
+                            for(String e: trampaType){
+                                System.out.println("Nombre: " + e + "| Tipo: " + mainMap.get(e));
                             }
-                            for(Map.Entry<String, String> e: hechiceroType){
-                                System.out.println("Nombre: " + e.getKey() + "| Tipo: " + e.getValue());
+                            for(String e: hechiceroType){
+                                System.out.println("Nombre: " + e + "| Tipo: " + mainMap.get(e));
                             }
                             System.out.println("Cantidad de cartas tipo Monstruo: " + monstruoCont);
                             System.out.println("Cantidad de cartas tipo Trampa: " + trampaContador);
@@ -217,7 +223,7 @@ public class Main {
                                 String value = entry.getValue();
 
                                 //Suma a los contadores dependiendo del tipo de la carta.
-                                System.out.println("Nombre: " + key + "| Tipo: " + value);
+                                System.out.println("Nombre: " + key + " | Tipo: " + value);
                                 if(value.equals("Monstruo")){
                                     monstruoCont ++;
                                 } else if (value.equals("Trampa")){
@@ -230,6 +236,7 @@ public class Main {
                             System.out.println("Cantidad de cartas tipo Monstruo: " + monstruoCont);
                             System.out.println("Cantidad de cartas tipo Trampa: " + trampaContador);
                             System.out.println("Cantidad de cartas tipo Hechizo: " + hechizoContador);
+                            break;
                         }
 
                         // 6. Mostrar el nombre y tipo de todas las cartas existentes ordenadas por tipo.
@@ -260,17 +267,18 @@ public class Main {
 
                             //Por cada entry en la lista de tipos Monstruo imprime el nombre y el tipo
                             for(Map.Entry<String, String> e: monstruoType){
-                                System.out.println("Nombre: " + e.getKey() + "| Tipo: " + e.getValue());
+                                System.out.println("Nombre: " + e.getKey() + " | Tipo: " + e.getValue());
                             }
                             for(Map.Entry<String, String> e: trampaType){
-                                System.out.println("Nombre: " + e.getKey() + "| Tipo: " + e.getValue());
+                                System.out.println("Nombre: " + e.getKey() + " | Tipo: " + e.getValue());
                             }
                             for(Map.Entry<String, String> e: hechiceroType){
-                                System.out.println("Nombre: " + e.getKey() + "| Tipo: " + e.getValue());
+                                System.out.println("Nombre: " + e.getKey() + " | Tipo: " + e.getValue());
                             }
                             System.out.println("Cantidad de cartas tipo Monstruo: " + monstruoCont);
                             System.out.println("Cantidad de cartas tipo Trampa: " + trampaContador);
                             System.out.println("Cantidad de cartas tipo Hechizo: " + hechizoContador);
+                            break;
                         }
                         case 7: {
                             wantsToContinue = false;
